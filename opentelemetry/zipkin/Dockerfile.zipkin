@@ -1,0 +1,20 @@
+FROM ubuntu:focal
+
+WORKDIR /app
+
+RUN apt-get update && apt-get install -y \
+    net-tools \
+    iputils-ping \
+    iproute2 \
+    openjdk-17-jdk \
+    curl \
+    wget \
+    firefox \
+    w3m && \
+    rm -rf /var/lib/apt/lists/*
+
+ENTRYPOINT ["w3m"]
+
+COPY ./zipkin/zipkin.jar .
+
+EXPOSE 9411
