@@ -44,3 +44,42 @@ Finally, the example processes a Connectivity test between each couple of host. 
 
 
 ## <span style="color: #33ff57;"> Open Telemetry </span> 
+
+The `opentelemetry` folder include the POC of the opentelemetry activities.
+
+**What is Opentelemetry?**
+Opentelemetry is a open source software use to capture trace, logs and metrics from applications.
+
+In this project context, we use it as a control tower which can stock all information from application.
+
+**What we modelised?**
+Using containernet we created this example erchitecture : 
+* `sender`: a simple host which is used to ping a python server (`server`) with a GET request,
+* `server`: this one is a python server containing  opentelemetry which intercept the GET from the sender, transform it to "trace" and then forward (POST) them to the "controller" (`tracer`),
+* `tracer`: just a python server used to intercer "traces" and print them on the terminal.
+
+![opentelemetry_example](./assets/opentelemetry.png)
+
+**How to run this example?**
+
+1. Run `sudo build.sh` from the `/opentelemetry` folder.
+2. On the containernet CLI run:
+```
+containernet> xterm d1_tracer && xterm d2_server && xterm h1_sender
+```
+> It will create a terminal for each hosts.
+3. From each of them do:
+``` 
+d1_tracer$ python3 tracer.py
+```
+``` 
+d2_server$ python3 servWeb.py
+```
+``` 
+h1_sender$ python3 sender/servAsk.py
+```
+
+> Now you can see the `h1_sender` sends GET requests to `d2_server` creating trace and forwarding them to `d1_tracer` who print them.
+
+
+## <span style="color: #33ff57;"> A complete example of observability </span> 
