@@ -16,6 +16,6 @@ while True:
     else:
         nbFailed += 1
         print("Failed with code "+str(response.status_code))
-    time.sleep(1)
+    time.sleep(3)
 
 print(nbSuccess+" out of "+nbEnvoyees+" ("+nbFailed+" failed attempts)")

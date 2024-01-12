@@ -1,8 +1,7 @@
 #!/bin/bash
 
-docker build -t zipkin:ubuntu -f ./zipkin/Dockerfile.zipkin .
+docker build -t zipkin:ubuntu -f ./tracer/Dockerfile.tracer .
 docker build -t server:ubuntu -f ./server/Dockerfile.server .
-
 python3 containernet_opentelemetry.py
 
 # Do on terminal for a complete cleaning !

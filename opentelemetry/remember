@@ -1,3 +1,0 @@
-d1_zipkin 
-d2_server python3 servWeb.py
-h1_sender python3 servAsk.py

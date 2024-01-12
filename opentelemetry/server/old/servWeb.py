@@ -4,27 +4,15 @@ from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.exporter.zipkin.json import ZipkinExporter
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import SimpleSpanProcessor
-from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
-from opentelemetry.trace import Span, get_tracer_provider
-
-class CustomExporter(SpanExporter):
-    def export(self, spans):
-        # Logique d'exportation vers votre serveur Python
-        for span in spans:
-            # Envoyez chaque span à votre serveur
-            print(f"Exporting span: {span.get_span_context()}")
-
-        return SpanExportResult.SUCCESS
-
 
 app = Flask(__name__)
 
-# CHANGE !!!
-exporter = CustomExporter()
+# Configurer l'exporteur Zipkin
+zipkin_exporter = ZipkinExporter(endpoint="http://zipkin:9411/api/v2/spans")
 
 # Configurer le fournisseur de trace
 tracer_provider = TracerProvider()
-tracer_provider.add_span_processor(SimpleSpanProcessor(exporter))
+tracer_provider.add_span_processor(SimpleSpanProcessor(zipkin_exporter))
 trace.set_tracer_provider(tracer_provider)
 
 # Instrumenter Flask

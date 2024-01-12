@@ -1,12 +1,13 @@
 #!/usr/bin/python3
-"""
-This is the most simple example to showcase Containernet.
-"""
+
+
 from mininet.net import Containernet
 from mininet.node import Controller
 from mininet.cli import CLI
 from mininet.link import TCLink
 from mininet.log import info, setLogLevel
+
+
 setLogLevel('info')
 
 
@@ -19,7 +20,6 @@ net.addController('c0')
 info('*** Adding docker containers\n')
 d1 = net.addDocker('d1_zipkin', ip='10.0.0.251', dimage="zipkin:ubuntu")
 d2 = net.addDocker('d2_serveur', ip='10.0.0.252', dimage="server:ubuntu")
-
 h1 = net.addHost('h1_sender', ip='10.0.0.1')
 
 
