@@ -2,6 +2,8 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+spans_infos_by_host = {} # link IP to a set of span names
+
 @app.route('/', methods=['POST'])
 def receive_traces():
     try:
@@ -12,19 +14,27 @@ def receive_traces():
 
         print("Traces received: "+str(len(traces)))
         for span_data in traces:
-            print('#######################################################')
-            print("Span name : ", str(span_data['name']))
+            ip_client = str(span_data['attributes']['origin']) if 'attributes' in span_data and 'origin' in span_data['attributes'] else "DEFAULT"
+            if ip_client not in spans_infos_by_host:
+                spans_infos_by_host[ip_client] = []
+            span_name = str(span_data['name'])+"__0"
+            if span_name in spans_infos_by_host[ip_client]:
+                span_name = span_name[:-1] + str(int(spans_infos_by_host[ip_client][-1][-1])+1) # on incrémente le numéro précédent dans la liste
+            spans_infos_by_host[ip_client].append(span_name)
 
+            attributes_list = []
             if 'attributes' in span_data:
                 for key, value in span_data['attributes'].items():
-                    print(str(key) + " : " + str(value))
+                    if key != "origin":
+                        attributes_list.append(str(key) +","+ str(value))
 
-            print("Start time : ", str(span_data['start_time']))
-            print("End time : ", str(span_data['end_time']))
+            elapsed_time = str(span_data['end_time'] - span_data['start_time'])
+            events = []
             if 'events' in span_data:
                 for event in span_data['events']:
-                    print("Span event : ", str(event))
-
+                    events.append(str(event["name"]) +","+ str(event['timestamp']))
+            with open((ip_client.replace(".","_")+".csv"), 'a') as writer:
+                writer.write(span_name +","+ elapsed_time +","+ " ".join(events) +","+ " ".join(attributes_list)+"\n")
         return jsonify(success=True)
 
     except Exception as e:

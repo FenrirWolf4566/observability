@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from opentelemetry import trace
 from opentelemetry.instrumentation.flask import FlaskInstrumentor
 from opentelemetry.exporter.zipkin.json import ZipkinExporter
@@ -89,19 +89,20 @@ def hello():
     # Créer une nouvelle trace
     with trace.get_tracer(__name__).start_as_current_span("main func") as parent:
         current_span = trace.get_current_span()
-        current_span.add_event("Start of Span")
+        current_span.set_attribute('origin', request.remote_addr)
         current_span.set_attribute("description", "Will execute a set of random opperations to complete this span")
         rd_generated_number = rd.randrange(10)
         current_span.set_attribute("Random number [0,9]", rd_generated_number)
+
         if rd_generated_number%2 == 0:
             current_span.add_event("EVENT : Even number")
         else:
             current_span.add_event("EVENT : Odd number")
+
         start = time.time()
         doSomething()
         elapsed_time = time.time() - start
         current_span.set_attribute("Time in 'doSomething' function", elapsed_time)
-        current_span.add_event("End of Span")
         return "Hello, World!"
 
 if __name__ == '__main__':
