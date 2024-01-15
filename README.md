@@ -66,7 +66,7 @@ Using containernet we created this architecture example:
 * `client_random`: a docker host used to constantly send `GET` requests to the python server with a random time (between 0 and 4 seconds),
 * `client_ddos`: another docker host which send `GET` requests to the same python server but without cooldown (really simple DDOS simulation),
 * `server`: docker host running a python server containing  opentelemetry, its role is to intercept GET requests from clients, transform them to "trace" and then forward (POST) them to the "controller" (`tracer`),
-* `tracer`: docker host with another python server used to intercer "traces" and print them on the terminal.
+* `tracer`: docker host with another python server used to intercer "traces" and register them in a csv file.
 
 
 ![opentelemetry_architecture](./assets/opentelemetry_architecture.png)
@@ -95,9 +95,14 @@ d4_ddos$ python3 client_ddos.py
 
 ![opentemetry_request](./assets/opentelemetry_request.png)
 
-This is an example of trace printed by the `d1_tracer` docker host:
 
-![opentemetry_trace](./assets/opentelemetry_trace.png)
+When a trace is received by d1_tracer, it is registered in a CSV file corresponding to the IP address of the client (in our example: 10_0_0_1.csv for d3_random and 10_0_0_2.csv for d4_ddos).
+
+Each line of the CSV file contains a different span with the following information:
+* Span name.
+* Elapsed time of the span (corresponding to the time taken by the request).
+* Set of events (description followed by the timestamp).
+* Set of attributes (name followed by a value).
 
 
 
