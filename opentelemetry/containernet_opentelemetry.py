@@ -20,7 +20,8 @@ net.addController('c0')
 info('*** Adding docker containers\n')
 d1 = net.addDocker('d1_tracer', ip='10.0.0.251', dimage="tracer:ubuntu")
 d2 = net.addDocker('d2_server', ip='10.0.0.252', dimage="server:ubuntu")
-h1 = net.addHost('h1_client', ip='10.0.0.1')
+d3 = net.addDocker('d3_random', ip='10.0.0.1', dimage="client:random")
+d4 = net.addDocker('d4_ddos', ip='10.0.0.2', dimage="client:ddos")
 
 
 info('*** Adding switches\n')
@@ -30,7 +31,8 @@ s1 = net.addSwitch('s1')
 info('*** Creating links\n')
 net.addLink(d1, s1)
 net.addLink(d2, s1)
-net.addLink(h1, s1)
+net.addLink(d3, s1)
+net.addLink(d4, s1)
 
 
 info('*** Starting network\n')
@@ -38,7 +40,7 @@ net.start()
 
 
 info('*** Testing connectivity\n')
-net.ping([h1, d1, d2])
+net.ping([d1, d2, d3, d4])
 
 
 info('*** Running CLI\n')

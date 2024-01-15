@@ -1,10 +1,14 @@
 # <span style="color: #ff5733;"> Observability </span> 
 
+Edited by: 
+* [@EdgeOfMemory](https://github.com/EdgeOfMemory-cloud)
+* [@Spraduss](https://github.com/Spraduss)
+* [@FenrirWolf4566](https://github.com/FenrirWolf4566)
 
 
-## <span style="color: #33ff57;"> Containernet </span> 
+## <span style="color: #33ff57;"> Containernet: virtual network with docker </span> 
 
-First of all, we wanted to create a complete network architecture. We started Mininet but Docker is more convenient for Open Telemetry usage.
+The aim of this section was to create a complete virtual network architecture. We started whith satndard Mininet hosts but Docker is more convenient for Open Telemetry usage.
 That why we used Containernet ([github](https://github.com/containernet/containernet)) which is a Mininet based project allowing Docker as Host.
 
 This section was used to create a simple example of Containernet, see below:
@@ -43,6 +47,11 @@ This one creates a Mininet architecture with :
 Finally, the example processes a Connectivity test between each couple of host. It shows that Dockers can ping Dockers, Hosts can ping Hosts and they can ping them together!
 
 
+
+
+
+
+
 ## <span style="color: #33ff57;"> Open Telemetry </span> 
 
 The `opentelemetry` folder include the POC of the opentelemetry activities.
@@ -53,19 +62,21 @@ Opentelemetry is a open source software use to capture trace, logs and metrics f
 In this project context, we use it as a control tower which can stock all information from application.
 
 **What we modelised?**
-Using containernet we created this example erchitecture : 
-* `sender`: a simple host which is used to ping a python server (`server`) with a GET request,
-* `server`: this one is a python server containing  opentelemetry which intercept the GET from the sender, transform it to "trace" and then forward (POST) them to the "controller" (`tracer`),
-* `tracer`: just a python server used to intercer "traces" and print them on the terminal.
+Using containernet we created this architecture example: 
+* `client_random`: a docker host used to constantly send `GET` requests to the python server with a random time (between 0 and 4 seconds),
+* `client_ddos`: another docker host which send `GET` requests to the same python server but without cooldown (really simple DDOS simulation),
+* `server`: docker host running a python server containing  opentelemetry, its role is to intercept GET requests from clients, transform them to "trace" and then forward (POST) them to the "controller" (`tracer`),
+* `tracer`: docker host with another python server used to intercer "traces" and print them on the terminal.
 
-![opentelemetry_example](./assets/opentelemetry.png)
+
+![opentelemetry_architecture](./assets/)
 
 **How to run this example?**
 
 1. Run `sudo build.sh` from the `/opentelemetry` folder.
 2. On the containernet CLI run:
 ```
-containernet> xterm d1_tracer && xterm d2_server && xterm h1_sender
+containernet> xterm d1_tracer && xterm d2_server && xterm d3_random && xterm d4_ddos
 ```
 > It will create a terminal for each hosts.
 3. From each of them do:
@@ -73,13 +84,17 @@ containernet> xterm d1_tracer && xterm d2_server && xterm h1_sender
 d1_tracer$ python3 tracer.py
 ```
 ``` 
-d2_server$ python3 servWeb.py
+d2_server$ python3 server.py
 ```
 ``` 
-h1_sender$ python3 sender/servAsk.py
+d3_random$ python3 client_random.py
+```
+``` 
+d4_ddos$ python3 client_ddos.py
 ```
 
-> Now you can see the `h1_sender` sends GET requests to `d2_server` creating trace and forwarding them to `d1_tracer` who print them.
 
 
-## <span style="color: #33ff57;"> A complete example of observability </span> 
+## <span style="color: #33ff57;"> A brief example of observability </span> 
+
+For this last section, we implemented the same architecture than the 
