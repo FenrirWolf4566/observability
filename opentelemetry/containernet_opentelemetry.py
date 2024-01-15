@@ -18,9 +18,9 @@ net.addController('c0')
 
 
 info('*** Adding docker containers\n')
-d1 = net.addDocker('d1_zipkin', ip='10.0.0.251', dimage="zipkin:ubuntu")
+d1 = net.addDocker('d1_tracer', ip='10.0.0.251', dimage="tracer:ubuntu")
 d2 = net.addDocker('d2_server', ip='10.0.0.252', dimage="server:ubuntu")
-h1 = net.addHost('h1_sender', ip='10.0.0.1')
+h1 = net.addHost('h1_client', ip='10.0.0.1')
 
 
 info('*** Adding switches\n')

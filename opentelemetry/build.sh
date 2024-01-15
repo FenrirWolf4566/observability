@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build -t zipkin:ubuntu -f ./tracer/Dockerfile.tracer .
+docker build -t tracer:ubuntu -f ./tracer/Dockerfile.tracer .
 docker build -t server:ubuntu -f ./server/Dockerfile.server .
 python3 containernet_opentelemetry.py
 
