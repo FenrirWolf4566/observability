@@ -9,11 +9,9 @@ RUN apt-get update && apt-get install -y \
     iproute2 \
     python3-pip
 
-COPY ./server/requirements.txt .
-COPY ./server/server.py .
+COPY ./clients/requirements.txt .
+COPY ./clients/client_ddos.py .
 
 RUN pip3 install --no-cache-dir -r requirements.txt
 
-EXPOSE 5000
-
-CMD ["python3", "server.py"]
+CMD ["python3", "client_ddos.py"]
