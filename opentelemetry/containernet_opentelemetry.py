@@ -47,3 +47,4 @@ CLI(net)
 
 info('*** Stopping network')
 net.stop()
+

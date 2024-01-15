@@ -8,9 +8,6 @@ from opentelemetry.sdk.trace.export import SpanExporter, SpanExportResult
 from opentelemetry.trace import Span, get_tracer_provider
 import requests
 
-import random as rd
-import time
-
 #######################################
 
 class CustomExporter(SpanExporter):
@@ -18,9 +15,10 @@ class CustomExporter(SpanExporter):
         self.endpoint = endpoint
 
     def export(self, spans):
+	print(spans)
         try:
             # Convertir les spans en un format que votre serveur comprend
-            formatted_spans = [self.format_spans(span) for span in spans]
+            formatted_spans = self.format_spans(spans)
 
             # Envoyer les spans à votre serveur Flask
             response = requests.post(self.endpoint, json=formatted_spans)
@@ -39,22 +37,10 @@ class CustomExporter(SpanExporter):
     def shutdown(self):
         pass  # Peut être utilisé pour effectuer des opérations de nettoyage lors de l'arrêt de l'application
 
-    def format_spans(self, span):
+    def format_spans(self, spans):
         # Format spécifique de vos spans pour l'envoi au serveur Flask
         # Ici, on utilise simplement les noms des traces
-        formatted_span = {
-            'name': span.name,
-            'start_time': span.start_time,
-            'end_time': span.end_time,
-            'events': [{
-                'name': event.name,
-                'attributes': dict(event.attributes) if hasattr(event, 'attributes') else None,
-                'timestamp': event.timestamp if hasattr(event, 'timestamp') else None,
-            } for event in span.events],
-            'attributes': dict(span.attributes),
-        }
-
-        return formatted_span
+        return [span.name for span in spans]
 
 #######################################
 
@@ -72,37 +58,12 @@ trace.set_tracer_provider(tracer_provider)
 # Instrumenter Flask
 FlaskInstrumentor().instrument_app(app)
 
-def doSomething():
-#Only sleep for a random generated time (from 10 to 999 ms)
-#Create a nested span to indicate the time taken
-    with trace.get_tracer(__name__).start_as_current_span("doSomething func") as child:
-        current_span = trace.get_current_span()
-        time_to_sleep = rd.randrange(10, 1000)/1000 # time to sleep in ms
-        current_span.add_event("executing some diffuclt work (sleeping)")
-        time.sleep(time_to_sleep)
-        current_span.set_attribute("Time that the difficult work took",time_to_sleep)
-        return
-
-
 @app.route('/')
 def hello():
     # Créer une nouvelle trace
-    with trace.get_tracer(__name__).start_as_current_span("main func") as parent:
-        current_span = trace.get_current_span()
-        current_span.add_event("Start of Span")
-        current_span.set_attribute("description", "Will execute a set of random opperations to complete this span")
-        rd_generated_number = rd.randrange(10)
-        current_span.set_attribute("Random number [0,9]", rd_generated_number)
-        if rd_generated_number%2 == 0:
-            current_span.add_event("EVENT : Even number")
-        else:
-            current_span.add_event("EVENT : Odd number")
-        start = time.time()
-        doSomething()
-        elapsed_time = time.time() - start
-        current_span.set_attribute("Time in 'doSomething' function", elapsed_time)
-        current_span.add_event("End of Span")
+    with trace.get_tracer(__name__).start_as_current_span("hello"):
         return "Hello, World!"
 
 if __name__ == '__main__':
+    nbRequests = 0
     app.run(host='0.0.0.0', port=5000, debug=True)
