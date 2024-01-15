@@ -69,7 +69,7 @@ Using containernet we created this architecture example:
 * `tracer`: docker host with another python server used to intercer "traces" and print them on the terminal.
 
 
-![opentelemetry_architecture](./assets/)
+![opentelemetry_architecture](./assets/opentelemetry_architecture.png)
 
 **How to run this example?**
 
@@ -93,8 +93,18 @@ d3_random$ python3 client_random.py
 d4_ddos$ python3 client_ddos.py
 ```
 
+![opentemetry_request](./assets/opentelemetry_request.png)
+
+This is an example of trace printed by the `d1_tracer` docker host:
+
+![opentemetry_trace](./assets/opentelemetry_trace.png)
 
 
-## <span style="color: #33ff57;"> A brief example of observability </span> 
 
-For this last section, we implemented the same architecture than the 
+## <span style="color: #33ff57;"> Observability </span> 
+
+The example we have given is more akin to supervision.
+
+Observability is, in fact, the ability to send and interpret information on a network, and then to alert according to instructions. It's this last point that we haven't addressed.
+
+Nevertheless, the traces we have recovered can be stored and then processed using either raw processing or artificial intelligence.

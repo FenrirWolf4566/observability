@@ -16,6 +16,13 @@
     python3 client_ddos.py
 
 
-To run all xterm : 
+To run all xterm: 
 
     xterm d1_tracer && xterm d2_server && xterm d3_random && xterm d4_ddos
+
+Run all python script on xterm:
+
+    d1_tracer$ python3 tracer.py
+    d2_server$ python3 server.py
+    d3_random$ python3 client_random.py
+    d4_ddos$ python3 client_ddos.py
