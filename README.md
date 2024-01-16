@@ -8,14 +8,14 @@ Edited by:
 
 ## <span style="color: #33ff57;"> Containernet: virtual network with docker </span> 
 
-The aim of this section was to create a complete virtual network architecture. We started whith satndard Mininet hosts but Docker is more convenient for Open Telemetry usage.
-That why we used Containernet ([github](https://github.com/containernet/containernet)) which is a Mininet based project allowing Docker as Host.
+This section aimed to create a complete virtual network architecture. We started with standard Mininet hosts but Docker was more convenient for OpenTelemetry usage.
+Therefore we used [Containernet](https://github.com/containernet/containernet) which is a Mininet based project allowing Docker as Host.
 
-This section was used to create a simple example of Containernet, see below:
+The picture below represents a simple example of Containernet:
 
 ![containernet_example](./assets/containernet_example.webp)
 
-### <span style="color: #5733ff;"> Run a example </span> 
+### <span style="color: #5733ff;"> Run an example </span> 
 
 **<span style="color: #ff5733;">Prerequisites</span>**
 
@@ -27,16 +27,16 @@ This section was used to create a simple example of Containernet, see below:
 
 > To install Containernet you have to follow [this official Github](https://github.com/containernet/containernet). Pay attention, bare metal installation requires Ubuntu 18.04!
 
-You can run this example using the `build.sh` file inside the `containernet` folder: `sudo ./build.sh`.
+You can run this example using the `build.sh` file inside the [containernet](./containernet/) folder: `sudo ./build.sh`.
 > Please don't use any prefix like `sudo ./containernet/build.sh`
 
-### <span style="color: #5733ff;"> What it does ? </span> 
+### <span style="color: #5733ff;"> What does it do? </span> 
 
-When you run the `build.sh`, it first build the two Docker ([Dockerfile.pinger](./containernet/Dockerfile.pinger) and [Dockerfile.receiver](./containernet/Dockerfile.receiver)) which are just updated Containernet examples adding specific Python scripts ([pinger.py](./containernet/pinger.py) and [receiver.py](./containernet/receiver.py)).
+When you run the `build.sh`, it first builds the two Docker images ([Dockerfile.pinger](./containernet/Dockerfile.pinger) and [Dockerfile.receiver](./containernet/Dockerfile.receiver)), which are just updated Containernet examples, adding specific Python scripts ([pinger.py](./containernet/pinger.py) and [receiver.py](./containernet/receiver.py)).
 
-> pinger.py : ping the IP `10.0.0.252` corresponding to `d2` (Docker 2)
+> pinger.py : pings the IP `10.0.0.252` corresponding to `d2` (Docker 2)
 
-> receiver.py : print when it is pinged by someone
+> receiver.py : prints when it is pinged by someone
 
 Then, it runs the [containernet_example.py](./containernet/containernet_example.py) using `python3 containernet_example.py`.
 This one creates a Mininet architecture with :
@@ -46,23 +46,17 @@ This one creates a Mininet architecture with :
 
 Finally, the example processes a Connectivity test between each couple of host. It shows that Dockers can ping Dockers, Hosts can ping Hosts and they can ping them together!
 
+## <span style="color: #33ff57;"> OpenTelemetry </span> 
 
+The [opentelemetry](./opentelemetry/) folder includes the proof of concept of the opentelemetry activities.
 
-
-
-
-
-## <span style="color: #33ff57;"> Open Telemetry </span> 
-
-The `opentelemetry` folder include the POC of the opentelemetry activities.
-
-**What is Opentelemetry?**
-Opentelemetry is a open source software use to capture trace, logs and metrics from applications.
+**What is OpenTelemetry?**
+Opentelemetry is an open source software uses to capture traces, logs and metrics from applications.
 
 In this project context, we use it as a control tower which can stock all information from application.
 
-**What we modelised?**
-Using containernet we created this architecture example: 
+**What does this model?**
+Using Containernet we created this architecture example: 
 * `client_random`: a docker host used to constantly send `GET` requests to the python server with a random time (between 0 and 4 seconds),
 * `client_ddos`: another docker host which send `GET` requests to the same python server but without cooldown (really simple DDOS simulation),
 * `server`: docker host running a python server containing  opentelemetry, its role is to intercept GET requests from clients, transform them to "trace" and then forward (POST) them to the "controller" (`tracer`),
@@ -95,7 +89,6 @@ d4_ddos$ python3 client_ddos.py
 
 ![opentemetry_request](./assets/opentelemetry_request.png)
 
-
 When a trace is received by d1_tracer, it is registered in a CSV file corresponding to the IP address of the client (in our example: 10_0_0_1.csv for d3_random and 10_0_0_2.csv for d4_ddos).
 
 Each line of the CSV file contains a different span with the following information:
@@ -104,12 +97,10 @@ Each line of the CSV file contains a different span with the following informati
 * Set of events (description followed by the timestamp).
 * Set of attributes (name followed by a value).
 
-
-
 ## <span style="color: #33ff57;"> Observability </span> 
 
-The example we have given is more akin to supervision.
+The example provided is more similar to supervision.
 
-Observability is, in fact, the ability to send and interpret information on a network, and then to alert according to instructions. It's this last point that we haven't addressed.
+Observability refers to the capacity to transmit and interpret information across a network and subsequently issue alerts based on instructions. The last point has not yet been addressed.
 
-Nevertheless, the traces we have recovered can be stored and then processed using either raw processing or artificial intelligence.
+However, the recovered traces can be stored and processed using either raw processing or artificial intelligence.
