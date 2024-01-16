@@ -38,7 +38,7 @@ When you run the `build.sh`, it first builds the two Docker images ([Dockerfile.
 
 > receiver.py : prints when it is pinged by someone
 
-Then, it runs the [containernet_example.py](./containernet/containernet_example.py) using `python3 containernet_example.py`.
+Then, it runs the [containernet_example.py](./containernet/containernet_example.py) file using `python3 containernet_example.py`.
 This one creates a Mininet architecture with :
 * two basic hosts (h1 and h2), 
 * two dockers hosts (d1 and d2), 
