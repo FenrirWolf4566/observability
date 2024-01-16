@@ -44,7 +44,7 @@ This one creates a Mininet architecture with :
 * two dockers hosts (d1 and d2), 
 * all linked by a switch (s1)
 
-Finally, the example processes a Connectivity test between each couple of host. It shows that Dockers can ping Dockers, Hosts can ping Hosts and they can ping them together!
+Finally, the example processes a connectivity test between each couple of host. It shows that Dockers can ping Dockers, Hosts can ping Hosts and they can ping them together!
 
 ## <span style="color: #33ff57;"> OpenTelemetry </span> 
 
